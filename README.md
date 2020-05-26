@@ -40,17 +40,17 @@ and the search will give you titles partial matched with your title, too.
 The *video* directory has the following structure:
 ```text
 /path/to/videos/
-|-- My awesome title/
-|   |-- artwork.jpg
-|   |-- cover.jpg
-|   |-- data.json
-|   +-- video.mp4
-|-- My next awesome title/
-|   |-- artwork.jpg
-|   |-- cover.jpg
-|   |-- data.json
-|   +-- video.mp4
-|-- ...
+├── My awesome title/
+|   ├── artwork.jpg
+|   ├── cover.jpg
+|   ├── data.json
+|   └── video.mp4
+├── My next awesome title/
+|   ├── artwork.jpg
+|   ├── cover.jpg
+|   ├── data.json
+|   └── video.mp4
+├── ...
 ```
 In the root directory are one directory for each title named as you like.
 In these directories there must be the following files:
