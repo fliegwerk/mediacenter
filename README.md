@@ -1,4 +1,4 @@
-# FMC - The Fliegwerk Mediacenter
+# FMC - The fliegwerk Mediacenter
 
 A simple mediacenter based on pure PHP without Javascript using only current browser features
 
