@@ -1,0 +1,52 @@
+#!/bin/sh
+
+set -e
+
+# optimize thumbnails
+# optimizes thumbnails in the video root directory
+# part of: fliegwerk/mediacenter
+# by fliegwerk
+## (c) 2020. MIT License
+
+# target resolution for covers
+COVER_RESOLUTION="500x750"
+COVER_FINAL_WIDTH="500"
+# target resolution for artwork
+ARTWORK_RESOLUTION="1920x1080"
+ARTWORK_FINAL_WIDTH="1920"
+
+compress_image() {
+    image="$1"
+    backup="$2"
+    resolution="$3"
+    final_width="$4"
+
+    if [ -f "$image" ]; then
+        if [ "$(identify -format "%w\n" "$image")" -gt "$final_width" ]; then
+            printf " \e[1;32mcompress"
+            
+            mv "$image" "$backup"
+            convert "$backup" -thumbnail "$resolution" "$image" > /dev/null
+        else
+            printf " \e[0;34mskipping"
+        fi
+    else
+        printf     " \e[1;31mno image"
+    fi
+}
+
+printf "\e[90m+----------+----------+----------------------------------------------\e[0m\n"
+printf "\e[90m| \e[1;37mcover    \e[0;90m| \e[1;37martwork  \e[0;90m| \e[1;37mdirectory\e[0m\n"
+printf "\e[90m+----------+----------+----------------------------------------------\e[0m\n"
+
+for directory in ./*/; do
+    printf "\e[90m|\e[0m"
+    
+    compress_image "${directory}cover.jpg" "${directory}cover-full.jpg" "$COVER_RESOLUTION" "$COVER_FINAL_WIDTH"
+    printf " \e[90m|\e[0m"
+    
+    compress_image "${directory}artwork.jpg" "${directory}artwork-full.jpg" "$ARTWORK_RESOLUTION" "$ARTWORK_FINAL_WIDTH"
+    printf " \e[90m| \e[0m%s\n" "$directory"
+done
+
+printf "\e[90m+----------+----------+----------------------------------------------\e[0m\n"
