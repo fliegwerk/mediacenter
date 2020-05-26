@@ -1,0 +1,1 @@
+Options -Indexesorder deny,allowdeny from allallow from 127.0.0.1# Only allow from local IPs:allow from 192.168.0.0/255.255.0.0
