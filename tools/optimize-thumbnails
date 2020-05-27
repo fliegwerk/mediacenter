@@ -6,7 +6,7 @@ set -e
 # optimizes thumbnails in the video root directory
 # part of: fliegwerk/mediacenter
 # by fliegwerk
-## (c) 2020. MIT License
+# (c) 2020. MIT License
 
 # target resolution for covers
 COVER_RESOLUTION="500x750"

@@ -1,0 +1,142 @@
+#!/usr/bin/env node
+
+const fs = require('fs');
+const path = require('path');
+const childProcess = require('child_process');
+
+/*
+ * tag video file
+ * tags a mp4 video file with AtomicParsley based on prepared directory
+ * part of: fliegwerk/mediacenter
+ * by fliegwerk
+ * (c) 2020. MIT License
+ */
+
+const COVER_SIZE = '600x900';
+
+const TAG_EDITOR = 'AtomicParsley';
+const IMAGE_EDITOR = 'convert';
+
+const cwd = process.cwd();
+const dataFile = path.join(cwd, './data.json');
+const videoPath =  path.join(cwd, './video.mp4');
+const coverFullPath = path.join(cwd, './cover-full.jpg');
+const coverDefaultPath = path.join(cwd, './cover.jpg');
+
+function info(message) {
+    console.log('INFO:', message);
+}
+
+function warn(message) {
+    console.log('WARNING:', message);
+}
+
+function error(message) {
+    console.error('ERROR:', message);
+    process.exit(1);
+}
+
+function newExecObj() {
+    function append(args) {
+        if (Array.isArray(args)) {
+            this.args.push(...args)
+        } else if (typeof args === 'string') {
+            this.args.push(args);
+        } else {
+            throw new Error('Invalid argument type. Only array of strings or string are allowed');
+        }
+        return this;
+    }
+
+    function addArg(argument) {
+        if (typeof argument !== 'string')
+            throw new Error('Argument is not a string');
+        return this.append(argument);
+    }
+
+    function addArgWithContent(argument, content) {
+        if (typeof argument !== 'string')
+            throw new Error('Argument is not a string');
+        if (content || typeof content === 'boolean') {
+            if (typeof content === 'object')
+                throw new Error('Object in content not allowed');
+            if (typeof content === 'string') content = content.replace(/"/gi, '\\"');
+            this.append([argument, '"' + content + '"']);
+        } else {
+            warn('Content for ' + argument + ' is empty. Skipping');
+        }
+        return this;
+    }
+
+    function exec() {
+        childProcess.execSync(this.args.join(' '), {stdio: 'inherit'});
+        return this;
+    }
+
+    return {
+        args: [],
+        append,
+        addArg,
+        addArgWithContent,
+        exec,
+    };
+}
+
+// check dependencies
+try {
+    childProcess.execSync('command -v ' + TAG_EDITOR);
+    childProcess.execSync('command -v ' + IMAGE_EDITOR);
+} catch (e) {
+    error(e.toString());
+}
+
+// check valid paths
+if (!fs.existsSync(dataFile)) error('Data file not found');
+if (!fs.existsSync(videoPath)) error('Video file not found');
+
+let coverPath = '';
+if (fs.existsSync(coverFullPath)) coverPath = coverFullPath;
+else coverPath = coverDefaultPath;
+if (!fs.existsSync(coverPath)) error('Cover image not found');
+
+info('Parse data.json');
+const data = JSON.parse(fs.readFileSync(dataFile).toString('utf8'));
+
+const editorCommand = newExecObj()
+    .addArg(TAG_EDITOR)
+    .addArg('"' + videoPath + '"')
+    .addArg('-W');  // overwrite after apply
+
+info('Set tags');
+editorCommand
+    .addArgWithContent('--title', data['title'])
+    .addArgWithContent('--year', data['release'])
+    .addArgWithContent('--artist', data['director'])
+    .addArgWithContent('--description', data['description'])
+    .addArgWithContent('--longdesc', data['description'])
+    .addArgWithContent('--copyright', data['copyright'])
+    .addArgWithContent('--compilation', false)
+    .addArgWithContent('--stik', 'Movie');
+
+let genre = '';
+if (Array.isArray(data['genre'])) {
+    genre = data['genre'][0];
+} else if (typeof data['genre'] === 'string') {
+    genre = data['genre'];
+} else {
+    warn('Unknown type for property "genre"');
+}
+editorCommand.addArgWithContent('--genre', genre);
+
+info('Resize cover');
+const resizedCoverPath = path.join(cwd, 'cover-resized.jpg');
+childProcess.execSync(IMAGE_EDITOR + ' "' + coverPath + '" -resize "' + COVER_SIZE + '" "' + resizedCoverPath + '"');
+
+info('Set cover image');
+editorCommand.addArgWithContent('--artwork', resizedCoverPath);
+
+info('Apply changes');
+editorCommand.exec();
+
+info('Remove resized cover file');
+fs.unlinkSync(resizedCoverPath);
