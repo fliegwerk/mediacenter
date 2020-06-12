@@ -59,9 +59,6 @@ allow from 192.168.0.0/255.255.0.0
   <filesmatch "\.(ico|flv|jpg|jpeg|png|gif|css|swf)$">
   Header set Cache-Control "max-age=2678400, public"
   </filesmatch>
-  <filesmatch "\.(html|htm)$">
-  Header set Cache-Control "max-age=7200, private, must-revalidate"
-  </filesmatch>
   <filesmatch "\.(pdf)$">
   Header set Cache-Control "max-age=86400, public"
   </filesmatch>
