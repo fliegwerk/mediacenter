@@ -1,5 +1,5 @@
 <p align="center">
-  <img height="300" src="./branding/logo.svg" alt="logo of fliegwerk mediacenter">
+  <img height="300" src="./branding/logo/logo.svg" alt="logo of fliegwerk mediacenter">
 </p>
 
 # FMC - The fliegwerk mediacenter
