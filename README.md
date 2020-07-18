@@ -73,10 +73,16 @@ The `data.json` file for every title has the following format:
     "of",
     "video"
   ],
-  "copyright": "Some nice copyright information to your video"
+  "copyright": "Some nice copyright information to your video",
+  "badges": [
+    "hd-720p",
+    "hevc-h265",
+    "aac-128k"
+  ]
 }
 ```
 All information will be parsed for every title and showed on the website.
+The badges array will be parsed to vector graphics equally named in the `badges` folder.
 
 ## Useful tools
 
