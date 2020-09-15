@@ -82,7 +82,7 @@ The `data.json` file for every title has the following format:
 }
 ```
 All information will be parsed for every title and showed on the website.
-The badges array will be parsed to vector graphics equally named in the `badges` folder.
+The `badges` array contains the file names (without extension) that are stored as `[name].svg` in the `badges` directory. `"hd-720p"`, for example, would render the file `badges/hd-720p`.
 
 ## Useful tools
 
