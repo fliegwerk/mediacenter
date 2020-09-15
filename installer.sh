@@ -6,7 +6,7 @@ set -e
 ## by fliegwerk
 ## (c) 2020. MIT License
 
-INSTALL_FILES="index.php config.php search.php main.css"
+INSTALL_FILES="index.php config.php search.php main.css badges"
 HTACCESS=".htaccess"
 
 [ "$(id -u)" -eq 0 ] || { printf "Root privileges required\n"; exit 1; }
@@ -16,7 +16,7 @@ read -r HTTP_PATH
 [ -d "$HTTP_PATH" ] || { printf "Path to http directory not found\n"; exit 1; }
 
 printf "Copy files\n"
-cp $INSTALL_FILES "${HTTP_PATH}/"
+cp -r $INSTALL_FILES "${HTTP_PATH}/"
 
 printf "Path to video directory: "
 read -r VIDEO_PATH
