@@ -63,7 +63,7 @@ if (isset($_GET[GET_PARAM_NAME_VIDEO])):
                     if (file_exists($path)) {
                         include $path;
                     } else {
-                        echo "<!-- Invalid badge: $badge, file not found: $path -->";
+                        echo "<!-- Invalid badge: " . htmlspecialchars($badge) . ", file not found: " . htmlspecialchars($path) . " -->";
                     }
                 }
                 ?>
