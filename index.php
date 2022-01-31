@@ -33,7 +33,7 @@ function get_json_from_file($path) {
     <form method="get">
         <label for="search">Suche nach:</label>
         <input type="search" id="search" name="<?= GET_PARAM_NAME_QUERY ?>"
-               placeholder="James Bond" value="<?= $_GET[GET_PARAM_NAME_QUERY] ?? "" ?>">
+               placeholder="James Bond" value="<?= htmlspecialchars($_GET[GET_PARAM_NAME_QUERY] ?? "") ?>">
         <button type="submit">Suchen</button>
     </form>
 </header>
@@ -47,6 +47,7 @@ if (isset($_GET[GET_PARAM_NAME_VIDEO])):
 
         if ($found !== false):
             $data = get_json_from_file($movie_path . "/data.json");
+            $badges = $data->badges ?? [];
             ?>
             <video width="100%" controls preload="metadata"
                    src="<?= $movie_path ?>/video.mp4" poster="<?= $movie_path ?>/artwork.jpg">
@@ -56,6 +57,17 @@ if (isset($_GET[GET_PARAM_NAME_VIDEO])):
                     DateTime::createFromFormat(DateTime::ISO8601, $data->release)->format("Y") ?>:
                 <i><?= $data->director ?? "Unbekannter Regisseur" ?></i></p>
             <p><?= $data->description ?? "N/A" ?></p>
+            <div>
+                <?php foreach ($badges as $badge) {
+                    $path = "./badges/$badge.svg";
+                    if (file_exists($path)) {
+                        include $path;
+                    } else {
+                        echo "<!-- Invalid badge: " . htmlspecialchars($badge) . ", file not found: " . htmlspecialchars($path) . " -->";
+                    }
+                }
+                ?>
+            </div>
             <p><small><?= $data->copyright ?? "" ?></small></p>
         <?php else: ?>
             <p>Video wurde nicht gefunden</p>
